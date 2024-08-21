@@ -13,7 +13,6 @@ import os
 import configparser
 
 # from hyper.contrib import HTTP20Adapter
-import win32com.client
 import time
 
 # import logging #log记录组件，目前没啥用
@@ -177,19 +176,6 @@ class legod(object):
             tmp_msg = token
             return False, tmp_msg
 
-    def check_exsit(self):
-        """
-        查询进程中是否存在游戏列表中的进程
-        """
-        WMI = win32com.client.GetObject("winmgmts:")
-        for i in self.applist:
-            processCodeCov = WMI.ExecQuery(
-                'select * from Win32_Process where Name like "%{}%"'.format(i + ".exe")
-            )
-            if len(processCodeCov) > 0:
-                return "检测到{}".format(i)
-        return False
-
     def get_account_info(self) -> tuple:
         """
         获取账号信息
@@ -299,7 +285,7 @@ class legod(object):
         else:
             e = Exception("调用此函数需要导入主函数所在路径")
             raise e
-        # global appname,sec,uname,password,update,account_token,configPath,lepath,conf # 大概没用注释一下
+        # global uname,password,account_token,configPath,conf # 大概没用注释一下
         if isDebug:  # 在当前文件路径下查找.ini文件
             # print("debug模式开启,密码不加密传输")
             print("debug模式开启")
@@ -311,26 +297,9 @@ class legod(object):
         self.conf.read(self.configPath, encoding="UTF-8-sig")
         # 捕获异常并打印错误信息
         try:
-            # get()函数读取section里的参数值
-            appname = self.conf.get("config", "games").replace(
-                "，", ","
-            )  # 先对字符串中的中文逗号进行替换
-            self.sec = int(
-                self.conf.get("config", "looptime")
-            )  # 允许游戏关闭的时间（在此时间内切换游戏不会关闭加速器）单位：秒
             self.uname = self.conf.get("config", "uname")  # 用户名/手机号
             self.md5 = self.conf.get("config", "md5")  # 密码是否已经md5加密
             self.password = self.conf.get("config", "password")  # 密码
-            self.update = int(
-                self.conf.get("config", "update")
-            )  # 检测时间，多少秒检测一次程序
-            self.lepath = self.conf.get("config", "path").strip(
-                '"'
-            )  # 雷神路径,替换掉外部的\"
-
-            self.applist = appname.split(",")  # 英文逗号分割成列表
-            print("目前检测游戏列表:{}".format(appname))
-
             # account_token=login(self.uname,self.password)
             account_token = self.conf.get("config", "account_token")
             return self.conf
@@ -338,24 +307,6 @@ class legod(object):
             print("文件加载地址为" + self.configPath)
             print("配置文件加载失败,请检查配置文件是否正确")
             print(e)
-
-    def detection(self):
-        sw = 1
-        while 1 == 1:
-            game = self.check_exsit()
-            if game:
-                if sw == 1:
-                    print(game)
-                    sw = 0
-            elif sw == 0:
-                for i in range(1, self.sec):
-                    game = self.check_exsit()
-                    time.sleep(1)
-                if game is False:
-                    self.pause()
-                sw = 1
-            time.sleep(self.update)
-
 
 # 常量定义区
 ## 是否为debug模式
@@ -369,4 +320,4 @@ configfile = "config.ini" if not isDebug else "config-dev.ini"
 if __name__ == "__main__":
     t = legod(True)
     t.login(t.uname,t.password)
-    t.detection()
+    t.pause()
