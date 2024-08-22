@@ -319,5 +319,6 @@ configfile = "config.ini" if not isDebug else "config-dev.ini"
 
 if __name__ == "__main__":
     t = legod(True)
+    print(t.uname, t.password)
     t.login(t.uname,t.password)
     t.pause()
