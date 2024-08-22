@@ -57,16 +57,7 @@ class legod(object):
         self.stopp = False
         self.conf = self.load()
         print(
-            """
-***************************************************
-*                                                 *
-*                                                 *
-*              雷神加速器自动暂停工具             *
-*                     正在运行                    *
-*                   作者:6yy66yy                  *
-*   https://github.com/6yy66yy/legod-auto-pause   *
-*                                                 *
-*************************************************** 当前版本：%s"""
+            """ 当前版本：%s"""
             % self.version
         )
     # 对密码生成md5进行判断
@@ -291,7 +282,6 @@ class legod(object):
         try:
             self.uname = os.environ["LEISHEN_USERNAME"]  # 用户名/手机号
             self.password = os.environ["LEISHEN_PASSWORD"]  # 密码
-            self.conf.set("uname", "dandan")
             self.md5 = self.conf.get("config", "md5")  # 密码是否已经md5加密 
             # account_token=login(self.uname,self.password)
             account_token = self.conf.get("config", "account_token")
@@ -299,7 +289,7 @@ class legod(object):
         except Exception as e:
             print("文件加载地址为" + self.configPath)
             print("配置文件加载失败,请检查配置文件是否正确")
-            print(e)
+            print("ERROR:" + e)
 
 # 常量定义区
 ## 是否为debug模式
@@ -312,6 +302,5 @@ configfile = "config.ini" if not isDebug else "config-dev.ini"
 
 if __name__ == "__main__":
     t = legod(True)
-    print(t.uname, t.password)
     t.login(t.uname,t.password)
     t.pause()
