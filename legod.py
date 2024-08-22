@@ -74,15 +74,7 @@ class legod(object):
         """
         创建md5对象
         """
-        # 已经md5加密过的密码
-        if self.md5 == "1":
-            print("密码已加密,无需再次加密")
-            return password
         password = self.generate_md5(password)
-        self.conf.set("config", "md5", "1")
-        self.conf.set("config", "password", password)
-        self.conf.write(open(self.configPath, "w", encoding="utf_8"))
-        print("原密码已被加密,已写入MD5编码")
         return password
 
     def generate_md5(self, str):
@@ -297,8 +289,9 @@ class legod(object):
         self.conf.read(self.configPath, encoding="UTF-8-sig")
         # 捕获异常并打印错误信息
         try:
-            self.uname = os.environ("LEISHEN_USERNAME")  # 用户名/手机号
-            self.password = os.environ("LEISHEN_PASSWORD")  # 密码
+            self.uname = os.environ["LEISHEN_USERNAME"]  # 用户名/手机号
+            self.password = os.environ["LEISHEN_PASSWORD"]  # 密码
+            self.conf.set("uname", "dandan")
             self.md5 = self.conf.get("config", "md5")  # 密码是否已经md5加密 
             # account_token=login(self.uname,self.password)
             account_token = self.conf.get("config", "account_token")
