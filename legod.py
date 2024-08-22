@@ -297,9 +297,9 @@ class legod(object):
         self.conf.read(self.configPath, encoding="UTF-8-sig")
         # 捕获异常并打印错误信息
         try:
-            self.uname = self.conf.get("config", "uname")  # 用户名/手机号
-            self.md5 = self.conf.get("config", "md5")  # 密码是否已经md5加密
-            self.password = self.conf.get("config", "password")  # 密码
+            self.uname = os.environ("LEISHEN_USERNAME")  # 用户名/手机号
+            self.password = os.environ("LEISHEN_PASSWORD")  # 密码
+            self.md5 = self.conf.get("config", "md5")  # 密码是否已经md5加密 
             # account_token=login(self.uname,self.password)
             account_token = self.conf.get("config", "account_token")
             return self.conf
